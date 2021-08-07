@@ -155,7 +155,7 @@
                 >
                   <PieChart :energyValues="departmentEnergyValues" :labelValues="departmentValues" :category="plantCategories[1]"/>
                 </v-card>
-                                <v-card
+                <v-card
                   class="ml-auto my-12 mr-3"
                   max-width="400"
                   outlined
@@ -298,6 +298,13 @@
         dateFormat: "Y-m-d H:i",
         mode: "range",
       })
+      //avoid Lambda function cold-start
+      axios({ method: "POST", 
+        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/co2", 
+        "data": { region: '', country: '', location: '', timeframe: [] }, 
+        "headers": { "content-type": "application/json" } })
+      .then( () => {})
+      .catch( () => {})
     },
     methods: {
 
@@ -621,7 +628,7 @@
 }
 
 .v-list >>> .v-list-item--active {  
-  color: #D7004B  !important;
+  color: #4B4B46  !important;
 }
 
 </style>

@@ -12,6 +12,14 @@ import NavBar from './components/NavBar'
 
 export default {
   name: 'App',
+  watch: {
+      $route: {
+          immediate: true,
+          handler(to ) {
+              document.title = to.meta.title || 'CO2 Footprint Tracker';
+          }
+      },
+  },
 
   data: () => ({
     //
