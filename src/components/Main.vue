@@ -278,9 +278,9 @@
 <script>
   import axios from 'axios'
   import flatpickr from "flatpickr"
-  import LineChart from './LineChart.vue'
-  import PieChart from './PieChart.vue'
-  import localforage from 'localforage'
+  import LineChart from '../components/LineChart.vue'
+  import PieChart from '../components/PieChart.vue'
+  //import localforage from 'localforage'
 
 
   require("flatpickr/dist/flatpickr.min.css")
@@ -289,8 +289,12 @@
   const pako = require('pako')
 
   export default {
-    name: 'Main',
+    name: 'LocationDetail',
     mounted() {
+
+      document.getElementsByClassName('v-tabs-slider')[0].style.backgroundColor = "white"
+
+      console.log(this.$route.params.loc_name.replace(/_/g, ' '))
       this.fp =flatpickr('#datepicker', {
         enableTime: true,
         altInput: true,
@@ -299,9 +303,8 @@
         mode: "range",
       })
       //avoid Lambda function cold-start
-      axios({ method: "POST", 
-        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/co2", 
-        "data": { region: '', country: '', location: '', timeframe: [] }, 
+      axios({ method: "GET", 
+        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2", 
         "headers": { "content-type": "application/json" } })
       .then( () => {})
       .catch( () => {})
@@ -312,7 +315,7 @@
         let jsonData
         let csv = "COUNTRY,LOCATION,MACHINE,INFRASTRUCTURE,DEPARTMENT,DATE,ENERGY-VALUE\n"
         var FileSaver = require('file-saver')
-        await localforage.getItem('db_data_location').then( value => {jsonData = value})
+        //await localforage.getItem('db_data_location').then( value => {jsonData = value})
 
         for (const i of jsonData[0]) {
           csv += `${this.selectedCountries},${this.selectedLocations},${i[4]},${i[0]},${i[3]},${i[2]},${i[1]}\n`
@@ -328,7 +331,7 @@
         this.filteredEnergyValues = []
         this.filteredValues = []
 
-        await localforage.getItem('db_data_location').then( value => {this.response = value})
+        //await localforage.getItem('db_data_location').then( value => {this.response = value})
         
         for (let i of this.response) {
           for (let j of i) {
@@ -406,6 +409,13 @@
 
       //}
     },
+     sortArray(arr,prop){
+  arr.sort((a,b)=>{
+    if(typeof a[prop] ==='string')
+      return b[prop].localeCompare(a[prop])
+    return b[prop] - a[prop]
+  })
+},
      async showValues() {
 
       this.payload = {}
@@ -459,79 +469,100 @@
         timeframe: this.period
       }
 
-      await axios({ method: "POST", 
-                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/co2", 
-                    "data": this.payload, 
+      await Promise.all([
+        axios({ method: "GET", 
+                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
+                    "params": {c: "date", i: this.selectedLocations, df: this.period[0], dt: this.period[1]}, 
+                    "headers": { "content-type": "application/json" } }),
+        axios({ method: "GET", 
+                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
+                    "params": {c: "subcategory", i: this.selectedLocations, df: this.period[0], dt: this.period[1]},  
+                    "headers": { "content-type": "application/json" } }),
+        axios({ method: "GET", 
+                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
+                    "params": {c: "area", i: this.selectedLocations, df: this.period[0], dt: this.period[1]}, 
+                    "headers": { "content-type": "application/json" } }),
+        axios({ method: "GET", 
+                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
+                    "params": {c: "tag_name", i: this.selectedLocations, df: this.period[0], dt: this.period[1]}, 
                     "headers": { "content-type": "application/json" } })
-                  .then( result => {
+      ])
+        .then( results => {
 
-                    if (result.status == 200) {
-                      this.response = result.data
+          this.response = results[0].data
 
-                    } 
-                  })
-                  .catch( error => {
-                    if (error.response) {
-                      this.errorMessage = error.response.data.message
-                      this.snackbar = true
-                      localforage.removeItem('db_data_location').then(function() {})
+          //decompress gzip response
+          this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
+          this.response = JSON.parse(this.response)
 
-                    }
-                  })
-      this.isBtnActive = true 
-      this.isSpinnerActive = false
-      //decompress gzip response
-        this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
-        this.response = JSON.parse(this.response)
+          this.timeValues = this.response[0]
+          this.energyValues = this.response[1]
 
-      
-      for (const i of this.response){
-          for (let j of i) {
-              if (!this.timeValues.includes(j[2])) {this.timeValues.push(j[2])}
-              if (!this.subCategoryValues.includes(j[0])) {this.subCategoryValues.push(j[0])}
-              if (!this.departmentValues.includes(j[3])) {this.departmentValues.push(j[3])}
-              if (!this.machineValues.includes(j[4])) {this.machineValues.push(j[4])}
+          this.response = results[1].data
+
+          //decompress gzip response
+          this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
+          this.response = JSON.parse(this.response)
+
+          this.subCategoryValues = this.response[0]
+          this.subEnergyValues = this.response[1]
+
+          this.response = results[2].data
+
+          //decompress gzip response
+          this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
+          this.response = JSON.parse(this.response)
+
+          this.departmentValues = this.response[0]
+          this.departmentEnergyValues = this.response[1]
+
+          this.response = results[3].data
+
+          //decompress gzip response
+          this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
+          this.response = JSON.parse(this.response)
+
+          let sortArray = []
+          for (var i = 0; i < this.response[0].length; i++) {
+              sortArray.push({machine: this.response[0][i], value: this.response[1][i]})
           }
-          for (let item of this.timeValues) {
-              this.sumEnergyValues = 0
-              for (let j of i) {
-                  if (j[2] == item) {this.sumEnergyValues += j[1]}
-              }
-              this.energyValues.push(this.sumEnergyValues)
-          }
-          for (let item of this.subCategoryValues) {
-              this.subSumEnergyValues = 0
-              for (let j of i) {
-                  if (j[0] == item) {this.subSumEnergyValues += j[1]}
-              }
-              this.subEnergyValues.push(this.subSumEnergyValues)
-          }
-          for (let item of this.departmentValues) {
-              this.departmentSumEnergyValues = 0
-              for (let j of i) {
-                  if (j[3] == item) {this.departmentSumEnergyValues += j[1]}
-              }
-              this.departmentEnergyValues.push(this.departmentSumEnergyValues)
-          }
-          for (let item of this.machineValues) {
-              this.machineSumEnergyValues = 0
-              for (let j of i) {
-                  if (j[4] == item) {this.machineSumEnergyValues += j[1]}
-              }
-              this.machineEnergyValues.push(this.machineSumEnergyValues)
+          this.sortArray(sortArray, "value")
+          sortArray = sortArray.slice(0,10)
+
+          for (let item of sortArray) {
+              this.machineValues.push(item.machine)
+              this.machineEnergyValues.push(item.value)
           }
 
-      }
-      for (const i of this.energyValues ) {
-        this.totalEnergyConsumed += i
-      }
-      
-      localforage.setItem('db_data_location', this.response).then(function () { })
-      this.isChartActive = true
-      this.isFilteredChart = false
+          for (const i of this.energyValues ) {
+            this.totalEnergyConsumed += i
+          }
+
+          this.isChartActive = true
+          this.isFilteredChart = false
+          this.isBtnActive = true 
+          this.isSpinnerActive = false
+
+        }).catch( error => {
+            if (error.response) {
+              this.errorMessage = error.response.data.message
+              this.snackbar = true
+              this.isBtnActive = true 
+              this.isSpinnerActive = false
+            }
+          })
+
+
+
+      this.timeValues = null
+      this.energyValues = 
+      this.subCategoryValues = null
+      this.subEnergyValues = null
+      this.departmentValues = null
+      this.departmentEnergyValues = null
+      this.machineValues = null
+      this.machineEnergyValues = null
       this.response = null
-
-
      }
    },
     data () {
@@ -577,7 +608,7 @@
         countries : [],
         locations: [],
 
-        plantCategories: ['Infrastructure', 'Department', 'Machine'],
+        plantCategories: ['Infrastructure', 'Department', 'Machine (Top 10)'],
         selectedPlantCategories:'',
         selectedFilterCateg: '',
         filterCateg: [],

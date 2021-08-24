@@ -1,6 +1,6 @@
 <template>
   <div class="PieWrapper">
-    <canvas :id="this.randomId" height="450" width="450"></canvas>
+    <canvas :id="this.randomId" height="200" width="350"></canvas>
   </div>
 </template>
 
@@ -28,18 +28,28 @@ export default {
 
         },
         options: {
+          responsive: false,
           plugins: {
             title: {
               text: '',
               display: true,
               font: {
-                size: 16,
+                size: 14,
                 weight: 'bold',
                 color: '#d7004b'
               }
             },
             legend:{
-              maxHeight: 115
+              maxHeight: -1,
+              // position: 'left',
+              // fullSize: false,
+              // labels:{
+              //   textAlign: 'justified',
+              //   boxWidth: 8,
+              //   font: {
+              //     size: 10
+              //   }
+              // }
             }
           }
         }
@@ -49,9 +59,28 @@ export default {
   },
   methods: {},
   mounted() {
+
+
+
+    for (const [index, item ] of this.labelValues.entries()) {
+      if (item == "Grid Electricity (purchased; renewable AND non-renewable)") {
+        this.labelValues[index] = "Grid Electricity"
+      }
+    }
     this.config.data.labels = this.labelValues 
-    this.config.data.datasets[0].data = this.energyValues 
-    this.config.options.plugins.title.text = `${this.category} energy distribution [kWh]`
+     
+    if ( this.category == "Scope 1" ) {
+      this.energyValues = this.energyValues.map( item => { item = item/1000; return item })
+      this.config.options.plugins.title.text = `${this.category} - Direct Emissions [tons CO2e]`    
+    } else if  ( this.category == "Scope 2" ) {
+      this.energyValues = this.energyValues.map( item => { item = item/1000; return item })
+      this.config.options.plugins.title.text = `${this.category} - Indirect Emissions [tons CO2e]`       
+    } else {
+      this.config.options.plugins.title.text = `${this.category} energy distribution [kWh]`
+    }
+
+    this.config.data.datasets[0].data = this.energyValues
+
     for (let i=0;i<this.energyValues.length;i++) {
         let r = Math.floor(Math.random() * 255);
         let g = Math.floor(Math.random() * 255);
@@ -69,5 +98,7 @@ export default {
 </script>
 
 <style scoped>
-
+canvas {
+  margin: auto;
+}
 </style>

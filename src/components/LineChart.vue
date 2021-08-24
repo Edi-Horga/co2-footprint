@@ -9,7 +9,7 @@ import Chart from 'chart.js/auto'
 
 export default {
   name: 'LineChart',
-  props: ['energyValues', 'timeValues', 'location'],
+  props: ['energyValues', 'timeValues', 'sourceDb', 'location'],
   data() {
     return {
       randomId: (Math.floor(100000 + Math.random() * 900000)).toString(),
@@ -27,6 +27,17 @@ export default {
         },
         options : {
           scales: {
+            x: {
+              ticks: {
+                callback: function(value) {
+                  if (this.getLabelForValue(value).includes(':')) {
+                    return this.getLabelForValue(value).substring(0,0)
+                  } else {
+                    return this.getLabelForValue(value)
+                  }
+                }
+              }
+            },
             y: {
               title: {
                 display: true,
@@ -39,13 +50,11 @@ export default {
     }
   },
   methods: {
-    setValue(x){
-      console.log(x)
-      this.dataChart = x
-      
-    }
   },
   mounted() {
+    if (this.sourceDb == "sofi") {
+      this.config.options.scales.y.title.text = "MWh"
+    } 
     this.config.data.labels = this.timeValues
     this.config.data.datasets[0].data = this.energyValues
     this.config.data.datasets[0].label = `${this.location} energy consumption`

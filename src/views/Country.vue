@@ -8,16 +8,15 @@
       <div id="mapContainer" style="height:540px; z-index: 0;"></div>
       </v-col>
       <v-col cols="12" sm="6">
-        
         <div style="display:flex;">
           <div style="width: 250px;">
             <v-autocomplete
-              v-model="location"
-              :items="locations"
+              v-model="country"
+              :items="countries"
               dense
               small
               outlined
-              label="Location"
+              label="Country"
             ></v-autocomplete>
           </div>
           <div style="width: 300px; margin-left: 10px;">
@@ -35,7 +34,7 @@
                     block
                     dark
                     color="#D7004B"
-                    @click="loadData('location', location, 'location1')"
+                    @click="loadData('country', country, 'country1')"
                     class="loadBtn"
                 >
                 Load Data
@@ -52,7 +51,6 @@
                 </div>
             </div>
         </div>
-        
         <div v-if="this.isChartActive">
           <v-card
              class="lx-auto my-auto"
@@ -61,7 +59,7 @@
            > 
             <v-card-text>
               <div class="text-center" style="margin-top:-10px;">
-                <h3><router-link :to="{ path: `/location/${this.cardLocation.replace(/\s+/g, '_')}` }">{{this.cardLocation}}</router-link></h3>
+                <h3>{{this.cardCountry}}</h3>
               </div>
               <v-divider/> 
                 <div>
@@ -72,7 +70,7 @@
                   <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString() }} metric tons CO2e </span>
                 </div>
             </v-card-text>
-            <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="this.location"/>
+            <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="this.country"/>
             <v-row>
               <v-card
                 class="mr-auto ml-3 my-3"
@@ -95,7 +93,7 @@
     
 
       <v-row>
-        <ExportData v-if="this.isChartActive" :region="this.location" :period="this.period" /> 
+        <ExportData v-if="this.isChartActive" :region="this.country" :period="this.period" /> 
         <div class="text-center ma-2">
           <v-snackbar
             v-model="snackbar"
@@ -127,7 +125,9 @@
   import L from "leaflet"
   import { Icon } from 'leaflet'
   import flatpickr from "flatpickr"
+  import axios from 'axios'
 
+  const pako = require('pako')
 
   delete Icon.Default.prototype._getIconUrl;
   Icon.Default.mergeOptions({
@@ -138,15 +138,15 @@
 
 
   export default {
-    name: 'LocationMap',
-    mounted() {
+    name: 'Country',
+     mounted() {
 
-      document.getElementsByClassName('v-tabs-slider')[0].style.backgroundColor = "#D7004B"
-
-      if ( localStorage.getItem("location_loc") !== null ) {
-        this.location = localStorage.getItem("location_loc")
+       document.getElementsByClassName('v-tabs-slider')[0].style.backgroundColor = "#D7004B"
+        
+      if ( localStorage.getItem("country_co") !== null ) {
+        this.country = localStorage.getItem("country_co")
       } else {
-          this.location = "Regensburg"
+        this.country = "Germany"
       }
 
       if ( localStorage.getItem("global_fp") !== null ) {
@@ -167,85 +167,102 @@
         defaultDate: this.defaultDates
       })
 
-      this.fp.selectedDates = this.defaultDates     
-      this.loadData('location', this.location, 'location1')
+      this.fp.selectedDates = this.defaultDates
+      this.loadData('country', this.country, 'country1')
+      this.loadGeo()
+
       
-      this.map = L.map("mapContainer").setView([25, 10], 1.5)
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-      }).addTo(this.map)
-
-
-      this.addMarkerToMap([52.52, 13.405], "red" ,"Berlin")
-      this.addMarkerToMap([50.1542, 8.5288], "green", "Schwalbach")
-      this.addMarkerToMap([49.1941, 12.5223], "red", "Roding")
-      this.addMarkerToMap([50.9689, 9.7973], "gold", "Bebra")
-      this.addMarkerToMap([51.2099, 10.4571], "violet", "Muehlhausen")
-      this.addMarkerToMap([51.5136, 7.4653], "grey", "Dortmund")
-      this.addMarkerToMap([50.9796, 10.3147], "black", "Eisenach (Hoerselberg-Hainich)")
-      this.addMarkerToMap([50.8576, 12.7537], "yellow", "Limbach-Oberfrohna")
-      this.addMarkerToMap([50.8378, 7.2127], "blue", "Lohmar")
-      this.addMarkerToMap([49.4521, 11.0767], "orange", "Nuremberg")
-      this.addMarkerToMap([49.0134, 12.1016], "blue", "Regensburg")
-      
-      this.addMarkerToMap([45.7489, 21.2087], "red", "Timisoara")
-      this.addMarkerToMap([45.6427, 25.5887], "gold", "Brasov")
-      this.addMarkerToMap([47.1585, 27.6014], "blue", "Iasi")
-
-      this.addMarkerToMap([47.5316, 21.6273], "green", "Debrecen")
-
-      this.addMarkerToMap([43.6047, 1.4442], "blue", "Toulouse")
-      this.addMarkerToMap([42.9641, 1.6052], "red", "Foix")
-      this.addMarkerToMap([49.0487, 6.5954], "violet", "Faulquemont")
-      this.addMarkerToMap([46.6027, 6.5839], "black", "Boussens")
-
-      this.addMarkerToMap([50.5654, 15.9091], "grey", "Trutnov")
-      this.addMarkerToMap([49.5483, 18.2108], "gold", "Frenstat")
-
-      this.addMarkerToMap([13.0239, 101.0724], "green", "Amata City")
-      
-      this.addMarkerToMap([37.2720, 127.4348], "gold", "Icheon")
-
-      this.addMarkerToMap([18.7376, 73.6747], "red", "Pune (Talegaon)")
-      this.addMarkerToMap([18.6117, 73.3208], "violet", "Pune (Taluka Mulshi; EMITEC)")
-
-      this.addMarkerToMap([31.3529, 118.4329], "blue", "Wuhu 1 (Yinhu)")
-      this.addMarkerToMap([31.2529, 118.3329], "black", "Wuhu 1 (Huashan)")
-      this.addMarkerToMap([39.3434, 117.3616], "orange", "Tianjin")
-      this.addMarkerToMap([43.8171, 125.3235], "grey", "Changchun I (Jing Kai)")
-
-      this.addMarkerToMap([29.5688, -97.9647], "grey", "Seguin")
-      this.addMarkerToMap([37.0871, -76.4730], "green", "Newport News")
-      this.addMarkerToMap([42.6485, -83.2453], "gold", "Auburn Hills South")
-
-      this.addMarkerToMap([18.8126, -98.9548], "red", "Cuautla")
-      this.addMarkerToMap([31.6904, -106.4245], "green", "Ciudad Juarez 2 (Viatech)")
-      this.addMarkerToMap([31.6004, -106.3345], "blue", "Ciudad Juarez 1 (Aerotech)")
-
-      this.addMarkerToMap([-23.1994, -47.2878], "green", "Salto")
-
-      this.addMarkerToMap([43.5691, 10.5172], "blue", "Pisa-Fauglia")
-      this.addMarkerToMap([43.6810, 10.3475], "red", "Pisa - San Piero")
     },
     methods: {
 
-        addMarkerToMap( coordinates, color, locationName){
-          return L.marker(coordinates, {icon: this.createIcon(color)})
-                  .addTo(this.map).on('click', () => { this.location = locationName })
-                  .bindTooltip(locationName)
-        },
+       async loadGeo() {
+          await Promise.all([
+            axios({ method: "GET", 
+                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/geo-country",  
+                    "headers": { "content-type": "application/json" } })
+          ])
+            .then( results => {
 
-        createIcon( color ) {
-          return new L.Icon({
-            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [15, 23.5],
-            iconAnchor: [6.5, 21],
-            popupAnchor: [1, -34],
-            shadowSize: [20.5, 20.5]
-          })
+            this.response = results[0].data
+
+            this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
+            this.response = JSON.parse(this.response)
+            
+            this.BR = JSON.parse(this.response[0])
+            this.CH = JSON.parse(this.response[1])
+            this.CZ = JSON.parse(this.response[2])
+            this.FR = JSON.parse(this.response[3])
+            this.GE = JSON.parse(this.response[4])
+            this.HU = JSON.parse(this.response[5])
+            this.IN = JSON.parse(this.response[6])
+            this.IT = JSON.parse(this.response[7])
+            this.MX = JSON.parse(this.response[8])
+            this.RO = JSON.parse(this.response[9])
+            this.KO = JSON.parse(this.response[10])
+            this.TH = JSON.parse(this.response[11])
+            this.US = JSON.parse(this.response[12])
+
+            }).catch( error => {
+                if (error.response) {
+                this.errorMessage = error.response.data.message
+                this.snackbar = true
+                this.isBtnActive = true 
+                this.isSpinnerActive = false
+                }
+            })
+
+          this.map = L.map("mapContainer").setView([25, 10], 1.5)
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+          }).addTo(this.map)
+
+          this.addGeoJson(this.BR, this.setStyleMap('red'), () => { this.country = 'Brazil' })
+          this.addGeoJson(this.CH, this.setStyleMap('blue'), () => { this.country = 'China' })         
+          this.addGeoJson(this.CZ, this.setStyleMap('green'), () => { this.country = 'Czech Republic' })
+          this.addGeoJson(this.FR, this.setStyleMap('#F2E500'), () => { this.country = 'France' })
+          this.addGeoJson(this.GE, this.setStyleMap('#D7004B'), () => { this.country = 'Germany' })         
+          this.addGeoJson(this.HU, this.setStyleMap('brown'), () => { this.country = 'Hungary' })
+          this.addGeoJson(this.IN, this.setStyleMap('#C79FEF'), () => { this.country = 'India' })
+          this.addGeoJson(this.IT, this.setStyleMap('#069AF3'), () => { this.country = 'Italy' })
+          this.addGeoJson(this.MX, this.setStyleMap('orange'), () => { this.country = 'Mexico' })         
+          this.addGeoJson(this.RO, this.setStyleMap('purple'), () => { this.country = 'Romania' })
+          this.addGeoJson(this.KO, this.setStyleMap('navy blue'), () => { this.country = 'South Korea' })
+          this.addGeoJson(this.TH, this.setStyleMap('teal'), () => { this.country = 'Thailand' })         
+          this.addGeoJson(this.US, this.setStyleMap('#4B4B46'), () => { this.country = 'USA' })
+
+          this.BR = null
+          this.CH = null
+          this.CZ = null
+          this.FR = null
+          this.GE = null
+          this.HU = null
+          this.IN = null
+          this.IT = null
+          this.MX = null
+          this.RO = null
+          this.KO = null
+          this.TH = null
+          this.US = null
+
+
+       },
+
+       setStyleMap(colorHex) {
+          return {
+            stroke: false,
+            fill: true,
+            fillColor: colorHex,
+            fillOpacity: 0.6            
+          }
+       },
+
+        addGeoJson(geoMap, styleMap, action) {
+          L.geoJson(geoMap, {
+            clickable: true,
+            style: styleMap,
+          }).addTo(this.map).on('click', action)
         },
 
         async downloadFile(){
@@ -260,6 +277,7 @@
           FileSaver.saveAs(blob, `${this.selectedCountries}_${this.selectedLocations}_${this.period[0]}-${this.period[1]}.csv`)
         },
 
+
     },
     components: {
       LineChart,
@@ -269,21 +287,18 @@
     },
     data(){
       return { 
-        location: '',
-        locations:  ["Berlin", "Schwalbach", "Roding", "Bebra", "Muehlhausen", "Dortmund", "Eisenach (Hoerselberg-Hainich)", "Limbach-Oberfrohna", "Lohmar",
-      "Nuremberg", "Regensburg", "Timisoara", "Brasov", "Iasi", "Debrecen", "Toulouse", "Foix", "Faulquemont", "Boussens", "Trutnov", "Frenstat",
-      "Amata City", "Icheon", "Pune (Talegaon)", "Pune (Taluka Mulshi; EMITEC)", "Wuhu 1 (Yinhu)", "Wuhu 1 (Huashan)", "Tianjin", "Changchun I (Jing Kai)",
-      "Seguin", "Newport News", "Auburn Hills South", "Cuautla", "Ciudad Juarez 2 (Viatech)", "Ciudad Juarez 1 (Aerotech)", "Salto", "Pisa-Fauglia", "Pisa - San Piero"
-      ].sort(),
+        country: '',                            
+        countries: ['Brazil', 'China', 'Czech Republic', 'France', 'Germany', 'Hungary', 'India', 'Italy', 'Mexico', 'Romania', 'South Korea', 'Thailand', 'USA' ],
         map: '',
         marker: '',
         marker1: '',
-        defaultDates: [],
+        sourceDb: 'sofi',
+        defaultDates:[],
         errorMessage: 'test',
         energyValues: [],
         timeValues: [],
-        cardLocation: '',
-        sourceDb: 'sofi',
+        response: '',
+        cardCountry: '',
 
         fp: '',
         period: [],
@@ -304,7 +319,6 @@
 </script>
 
 <style scoped>
-
 canvas {
   margin: auto !important;
 }

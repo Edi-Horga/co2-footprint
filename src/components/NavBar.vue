@@ -14,15 +14,23 @@
         <template v-slot:extension>
           <v-tabs
             color="#4B4B46"
-            align-with-title
+            right
           >
-            <v-tab to="/" >
-              Home
-            </v-tab>       
-            <v-tab to="/location" >
-              Location
+            <v-tab 
+              to="/global" >
+              Global
+            </v-tab> 
+            <v-tab to="/region" >
+              Region
             </v-tab>
-            <v-tabs-slider color="#F2E500"></v-tabs-slider>
+            <v-tab to="/country" >
+              Country
+            </v-tab>
+            <v-tab to="/location">
+              Location
+            </v-tab>       
+
+            <v-tabs-slider color="#D7004B"></v-tabs-slider>
           </v-tabs>
         </template>
       </v-app-bar>
@@ -38,6 +46,7 @@ export default {
 </script>
 
 <style scoped>
+
 .v-toolbar .v-toolbar__extension {
   border-bottom: 2px solid #f2e500 !important;
 }

@@ -20,6 +20,14 @@ export default {
           }
       },
   },
+  created() {
+
+    document.addEventListener('keyup', event => {
+      if (event.key === 'Enter') { 
+        this.loadData()
+      }
+    })
+  },
 
   data: () => ({
     //

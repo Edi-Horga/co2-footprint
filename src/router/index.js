@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Region from '../views/Region.vue'
+import LocationDetail from '../views/LocationDetail.vue'
+import Global from '../views/Global.vue'
+import Country from '../views/Country.vue'
 import Location from '../views/Location.vue'
 
 Vue.use(VueRouter)
@@ -8,8 +11,17 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    redirect: '/global'
+  },
+  {
+    path: '/region',
+    name: 'Region',
+    component: Region
+  },
+  {
+    path: '/global',
+    name: 'global',
+    component: Global
   },
   {
     path: '/about',
@@ -24,6 +36,19 @@ const routes = [
     name: 'Location',
     component: Location
   },
+  {
+    path: '/country',
+    name: 'Country',
+    component: Country    
+  },
+  {
+    path: '/location/:loc_name',
+    name: 'LocationDetail',
+    //props: true,
+    components: { default: LocationDetail},
+    props: { default: true }
+  }
+
 ]
 
 const router = new VueRouter({
