@@ -5,7 +5,7 @@
         cols="12"
         sm="6"
       >
-      <div id="mapContainer" style="height:540px; z-index: 0;"></div>
+      <div id="mapContainer" style="height: 76vh; z-index: 0;"></div>
       </v-col>
       <v-col cols="12" sm="6">
         <div style="display:flex;">
@@ -53,9 +53,11 @@
         </div>
         <div v-if="this.isChartActive">
           <v-card
-             class="lx-auto my-auto"
+             class="lx-auto my-auto overflow-y-auto overflow-x-hidden"
              max-width="1000"
              outlined
+             height="70vh"
+             style="scrollbar-width: thin;"
            > 
             <v-card-text>
               <div class="text-center" style="margin-top:-10px;">
@@ -71,17 +73,17 @@
                 </div>
             </v-card-text>
             <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="this.country"/>
-            <v-row>
+            <v-row justify="center">
               <v-card
-                class="mr-auto ml-3 my-3"
-                width="365"
+                class="my-6"
                 outlined
               >
                 <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
               </v-card>
+            </v-row>
+            <v-row justify="center">
               <v-card
-                class="mr-3 my-3"
-                width="365"
+                class="my-0"
                 outlined
               >
                 <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>

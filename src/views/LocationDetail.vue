@@ -51,9 +51,14 @@
                 </div>
             </v-row>
             <v-row justify="center">
-            <v-col cols="12" sm="6" class="px-2 pt-0">
-                <v-card v-if="this.isChartActive" class="lx-auto my-auto" outlined>
-
+            <v-col cols="12" sm="10" class="px-2 pt-0 mx-5">
+                <v-card 
+                  v-if="this.isChartActive"
+                  class="lx-auto my-auto overflow-y-auto overflow-x-hidden"
+                  outlined
+                  height="71vh"
+                  style="scrollbar-width: thin;"
+                  >
               <v-card-text class="pt-0 px-2 pb-3">
                 <div>
                   <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right">{{ this.totalEnergyConsumed.toLocaleString()}} kWh </span>
@@ -69,15 +74,15 @@
               <v-divider/>
               <v-row justify="center">
                 <v-card
-                    class="my-3"
-                    width="373"
+                    class="my-6"
                     outlined
                 >
                   <PieChart :energyValues="subEnergyValues" :labelValues="subCategoryValues" :category="plantCategories[0]"/>
                 </v-card>
+              </v-row>
+              <v-row justify="center">
                 <v-card
-                  class="my-3"
-                  width="373"
+                  class="my-0"
                   outlined
                 >
                   <PieChart :energyValues="departmentEnergyValues" :labelValues="departmentValues" :category="plantCategories[1]"/>
@@ -330,14 +335,7 @@
           this.filterCateg = this.machineValues
         }
       },
-      
-     sortArray(arr,prop){
-        arr.sort((a,b)=>{
-            if(typeof a[prop] ==='string')
-            return b[prop].localeCompare(a[prop])
-            return b[prop] - a[prop]
-        })
-    },
+
      fpSetPeriod() {
         for (let item of this.fp.selectedDates) {
             if (item.getMinutes().toString().length == 1) {
@@ -447,14 +445,14 @@
             this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
             this.response = JSON.parse(this.response)
 
-            let sortArray = []
+            let sortedArray = []
             for (var i = 0; i < this.response[0].length; i++) {
-                sortArray.push({machine: this.response[0][i], value: this.response[1][i]})
+                sortedArray.push({machine: this.response[0][i], value: this.response[1][i]})
             }
-            this.sortArray(sortArray, "value")
-            sortArray = sortArray.slice(0,10)
+            this.sortArray(sortedArray, "value")
+            sortedArray = sortedArray.slice(0,10)
 
-            for (let item of sortArray) {
+            for (let item of sortedArray) {
                 this.machineValues.push(item.machine)
                 this.machineEnergyValues.push(item.value)
             }

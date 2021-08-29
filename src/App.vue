@@ -37,3 +37,12 @@ export default {
   }
 };
 </script>
+
+<style>
+
+.v-application .overflow-y-auto {
+  
+    height: 500px;
+}
+
+</style>

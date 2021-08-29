@@ -5,7 +5,7 @@
         cols="12"
         sm="6"
       >
-      <div id="mapContainer" style="height:540px; z-index: 0;"></div>
+      <div id="mapContainer" style="height: 76vh; z-index: 0;"></div>
       </v-col>
       <v-col cols="12" sm="6">
         <div style="display:flex;">
@@ -54,9 +54,11 @@
         
         <div v-if="this.isChartActive">
           <v-card
-             class="lx-auto my-auto"
+             class="lx-auto my-auto overflow-y-auto overflow-x-hidden"
              max-width="1000"
              outlined
+             height="70vh"
+             style="scrollbar-width: thin;"
            > 
             <v-card-text>
               <div class="text-center" style="margin-top:-10px;">
@@ -68,26 +70,26 @@
                 </div>
                 <br>
                 <div>
-                  <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString() }} metric tons CO2e </span>
+                  <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString() }} tons CO2e </span>
                 </div>
             </v-card-text>
             <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="'Vitesco Technologies'"/>
-            <v-row>
-              <v-card
-                class="mr-auto ml-3 my-3"
-                width="365"
-                outlined
-              >
-                <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
-              </v-card>
-              <v-card
-                class="mr-3 my-3"
-                width="365"
-                outlined
-              >
-                <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>
-              </v-card>
-            </v-row>
+              <v-row justify="center">
+                <v-card
+                  class="my-6"
+                  outlined
+                >
+                  <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
+                </v-card>
+              </v-row>
+              <v-row  justify="center">
+                <v-card
+                  class="my-0"
+                  outlined
+                >
+                  <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>
+                </v-card>
+              </v-row>
           </v-card>
         </div>
       </v-col>
@@ -254,4 +256,6 @@ canvas {
 .v-application .my-auto {
   margin-top: -20px !important;
 }
+
+
 </style>
