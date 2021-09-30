@@ -18,6 +18,7 @@
               small
               outlined
               label="Location"
+              @change="loadData('location', location, 'location1')"
             ></v-autocomplete>
           </div>
           <div style="width: 300px; margin-left: 10px;">
@@ -69,15 +70,14 @@
                 <div>
                   <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right"> {{ (this.totalEnergyConsumed).toLocaleString() }} MWh </span>
                 </div>
-                <br>
-                <div>
+                <!-- <div>
                   <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString() }} metric tons CO2e </span>
-                </div>
+                </div> -->
             </v-card-text>
             <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="this.location"/>
             <v-row justify="center">
               <v-card
-                class="my-6"
+                class="mt-6 mb-2"
                 outlined
               >
                 <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
@@ -201,7 +201,7 @@
       this.addMarkerToMap([43.6047, 1.4442], "blue", "Toulouse")
       this.addMarkerToMap([42.9641, 1.6052], "red", "Foix")
       this.addMarkerToMap([49.0487, 6.5954], "violet", "Faulquemont")
-      this.addMarkerToMap([46.6027, 6.5839], "black", "Boussens")
+      this.addMarkerToMap([43.1762, 0.9726], "black", "Boussens")
 
       this.addMarkerToMap([50.5654, 15.9091], "grey", "Trutnov")
       this.addMarkerToMap([49.5483, 18.2108], "gold", "Frenstat")
@@ -235,7 +235,7 @@
 
         addMarkerToMap( coordinates, color, locationName){
           return L.marker(coordinates, {icon: this.createIcon(color)})
-                  .addTo(this.map).on('click', () => { this.location = locationName })
+                  .addTo(this.map).on('click', () => { this.location = locationName }).on('click', () => { this.loadData('location', this.location, 'location1') })
                   .bindTooltip(locationName)
         },
 
@@ -299,7 +299,7 @@
 
         totalEnergyConsumed: 0,
         totalKgCo2: 0,
-        scopeCategories: ['Scope 1', 'Scope 2']
+        scopeCategories: ['Scope 1', 'Scope 2' ]
       }
     }
   }

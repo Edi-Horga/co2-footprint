@@ -68,15 +68,30 @@
                 <div>
                   <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right"> {{ (this.totalEnergyConsumed).toLocaleString() }} MWh </span>
                 </div>
-                <br>
-                <div>
-                  <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString() }} tons CO2e </span>
-                </div>
+                <!-- <div>
+                  <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalKgCo2 / 1000).toLocaleString(undefined, {maximumFractionDigits: 0}) }} tons CO2e </span>
+                </div> -->
             </v-card-text>
             <LineChart  :energyValues="energyValues" :timeValues="timeValues" :sourceDb="this.sourceDb" :location="'Vitesco Technologies'"/>
               <v-row justify="center">
                 <v-card
-                  class="my-6"
+                  class="mt-6 mb-2"
+                  outlined
+                >
+                  <PieChart :energyValues="distributionRegionsEnergyCO2" :labelValues="distributionRegionsValues" :category="scopeCategories[2]"/>
+                </v-card>
+              </v-row>
+              <v-row justify="center">
+                <v-card
+                  class="mb-2"
+                  outlined
+                >
+                  <PieChart :energyValues="distributionRegionsEnergyMWh" :labelValues="distributionRegionsValues" :category="scopeCategories[3]"/>
+                </v-card>
+              </v-row>
+              <v-row  justify="center">
+                <v-card
+                  class="mb-2"
                   outlined
                 >
                   <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
@@ -84,7 +99,7 @@
               </v-row>
               <v-row  justify="center">
                 <v-card
-                  class="my-0"
+                  class="mb-2"
                   outlined
                 >
                   <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>
@@ -196,6 +211,10 @@
         energyValues: [],
         timeValues: [],
 
+        distributionRegionsValues: [],
+        distributionRegionsEnergyCO2: [],
+        distributionRegionsEnergyMWh: [],
+
         fp: '',
         period: [],
         months:'',
@@ -208,7 +227,7 @@
 
         totalEnergyConsumed: 0,
         totalKgCo2: 0,
-        scopeCategories: ['Scope 1', 'Scope 2']
+        scopeCategories: ['Scope 1', 'Scope 2', 'Scope 1 & Scope 2', 'MWh']
       }
     }
   }

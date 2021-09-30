@@ -30,7 +30,7 @@ export default {
   },
 
   data: () => ({
-    //
+    
   }),
   components: {
     NavBar
@@ -43,6 +43,10 @@ export default {
 .v-application .overflow-y-auto {
   
     height: 500px;
+}
+
+html {
+  overflow: hidden;
 }
 
 </style>

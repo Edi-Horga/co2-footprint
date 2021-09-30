@@ -2,7 +2,6 @@
 <div id="app" >
   <v-app id="inspire">
     <v-container fluid class="mx-0 px-0">
-      
           <v-col cols="12" sm="12"> 
             <v-row  justify="center" dense class="mb-n6 mt-n2">
                 <div style="margin-top: 5px;">
@@ -51,140 +50,126 @@
                 </div>
             </v-row>
             <v-row justify="center">
-            <v-col cols="12" sm="10" class="px-2 pt-0 mx-5">
+              <v-col cols="12" sm="10" class="px-2 pt-0 mx-5">
                 <v-card 
-                  v-if="this.isChartActive"
-                  class="lx-auto my-auto overflow-y-auto overflow-x-hidden"
-                  outlined
-                  height="71vh"
-                  style="scrollbar-width: thin;"
-                  >
-              <v-card-text class="pt-0 px-2 pb-3">
-                <div>
-                  <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right">{{ this.totalEnergyConsumed.toLocaleString()}} kWh </span>
-                </div>
-                <br>
-                <div>
-                  <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalEnergyConsumed * this.co2Factor / 1000).toFixed(2).toLocaleString() }} metric tons CO2e </span>
-                </div>
-              </v-card-text>
-              <br>
-              <v-divider/>
-              <LineChart  :energyValues="energyValues" :timeValues="timeValues" :location="this.location"/>
-              <v-divider/>
-              <v-row justify="center">
-                <v-card
-                    class="my-6"
+                    v-if="this.isChartActive"
+                    class="lx-auto my-auto overflow-y-auto overflow-x-hidden"
                     outlined
+                    height="71vh"
+                    style="scrollbar-width: thin;"
+                    ref="card"
                 >
-                  <PieChart :energyValues="subEnergyValues" :labelValues="subCategoryValues" :category="plantCategories[0]"/>
-                </v-card>
-              </v-row>
-              <v-row justify="center">
-                <v-card
-                  class="my-0"
-                  outlined
-                >
-                  <PieChart :energyValues="departmentEnergyValues" :labelValues="departmentValues" :category="plantCategories[1]"/>
-                </v-card>
-              </v-row>
-                </v-card>
-            </v-col>
-
-            <v-col cols="12" sm="6" class="px-2 pt-0">
-                <v-card v-if="this.isChartActive" class="rx-auto my-auto" outlined>
-                <v-row justify="center">
-                  <v-card
-                    class="my-3"
-                    width="365"
-                    outlined
-                  >
-                    <PieChart :energyValues="machineEnergyValues" :labelValues="machineValues" :category="plantCategories[2]"/>
-                  </v-card>
-              </v-row>
-              <v-divider/>
-              <v-card-text class="pt-0 px-2 mb-n11">
-                <v-row  justify="center" class="mt-2">
-                  <div style="margin-left: 5px; width: 200px;">
-                    <v-select
-                      v-model="selectedPlantCategories"
-                      :items= plantCategories
-                      :menu-props="{ maxHeight: '400' }"
-                      label="Category"
-                      dense
-                      persistent-hint
-                      outlined
-                      @change="checkFilter"
-                    >
-                    </v-select>
-                  </div>
-                  <div style="margin-right: 5px; margin-left: 5px; width: 400px;">
-                    <v-autocomplete
-                      v-model="selectedFilterCateg"
-                      :items= filterCateg
-                      :menu-props="{ maxHeight: '400' }"
-                      label="Filter by:"
-                      dense
-                      persistent-hint
-                      outlined
-                      prepend-inner-icon="mdi-filter"
-                      
-                    >
-                    </v-autocomplete>
-                  </div>
-                  <div style="margin-right: 5px; width: 50px;">
-                  <v-btn
-                    v-if="this.isBtnActive2"
-                    rounded
-                    color="#4B4B46"
-                    dark
-                    block
-                    class="loadBtn"
-                    @click="filterData()"
-                  >
-                    <v-icon
-                      medium
-                      color="white"
-                    >
-                      mdi-magnify
-                    </v-icon>
-                  </v-btn>
-                    <div class="text-center">
-                        <v-progress-circular
-                        v-if="this.isSpinnerActive2"
-                        :size="25"
-                        :width="4"
-                        color="#4B4B46"
-                        indeterminate
-                        center
-                        ></v-progress-circular>
+                  <v-card-text class="pt-0 px-2 pb-3">
+                    <div>
+                      <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right">{{ this.totalEnergyConsumed.toLocaleString()}} kWh </span>
                     </div>
-                  </div>
-                </v-row>
-              </v-card-text>
-              <br>
-              <v-divider/>
-              <LineChart v-if="isFilteredChart" :energyValues="filteredEnergyValues" :timeValues="filteredValues" :location="selectedFilterCateg"/>
-              <v-divider/>
-
-
+                    <br>
+                    <div>
+                      <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalEnergyConsumed * this.co2Factor / 1000).toFixed(2).toLocaleString() }} metric tons CO2e </span>
+                    </div>
+                  </v-card-text>
+                  <br>
+                  <v-divider/>
+                  <LineChart  :energyValues="energyValues" :timeValues="timeValues" :location="this.location"/>
+                  <v-divider/>
+                  <v-row justify="center">
+                    <v-card
+                        class="mt-6 mb-2"
+                        outlined
+                    >
+                      <PieChart :energyValues="subEnergyValues" :labelValues="subCategoryValues" :category="plantCategories[0]"/>
+                    </v-card>
+                    <v-card
+                      class="mt-6 mb-2"
+                      outlined
+                    >
+                      <PieChart :energyValues="departmentEnergyValues" :labelValues="departmentValues" :category="plantCategories[1]"/>
+                    </v-card>
+                  </v-row>
+                  <v-row justify="center">
+                    <v-card
+                      class="mb-2"
+                      outlined
+                    >
+                      <PieChart :energyValues="machineEnergyValues" :labelValues="machineValues" :category="plantCategories[2]"/>
+                    </v-card>
+                  </v-row>
+                  <br>
+                  <v-divider/>
+                  <v-row  justify="center" class="mt-6">
+                    <div style="margin-left: 5px; width: 200px;">
+                      <v-select
+                        v-model="selectedPlantCategories"
+                        :items= plantCategories
+                        :menu-props="{ maxHeight: '400' }"
+                        label="Category"
+                        dense
+                        persistent-hint
+                        outlined
+                        @change="checkFilter"
+                      >
+                      </v-select>
+                    </div>
+                    <div style="margin-right: 5px; margin-left: 5px; width: 400px;">
+                      <v-autocomplete
+                        v-model="selectedFilterCateg"
+                        :items= filterCateg
+                        :menu-props="{ maxHeight: '400' }"
+                        label="Filter by:"
+                        dense
+                        persistent-hint
+                        outlined
+                        prepend-inner-icon="mdi-filter"
+                        
+                      >
+                      </v-autocomplete>
+                    </div>
+                    <div style="margin-right: 5px; width: 50px;">
+                    <v-btn
+                      v-if="this.isBtnActive2"
+                      rounded
+                      color="#4B4B46"
+                      dark
+                      block
+                      class="loadBtn"
+                      @click="filterData()"
+                    >
+                      <v-icon
+                        medium
+                        color="white"
+                      >
+                        mdi-magnify
+                      </v-icon>
+                    </v-btn>
+                      <div class="text-center">
+                          <v-progress-circular
+                          v-if="this.isSpinnerActive2"
+                          :size="25"
+                          :width="4"
+                          color="#4B4B46"
+                          indeterminate
+                          center
+                          ></v-progress-circular>
+                      </div>
+                    </div>
+                  </v-row>
+                  <v-divider/>
+                  <LineChart v-if="isFilteredChart" :energyValues="filteredEnergyValues" :timeValues="filteredValues" :location="selectedFilterCateg"/>
+                  <v-divider/>
                 </v-card>
-            </v-col>
-            
-            <v-btn v-if="this.isChartActive" fab dark small color="#4B4B46" fixed left bottom @click="downloadFile"> 
-                <v-icon
-                medium
-                color="white"
-                >
-                mdi-arrow-collapse-down
-                </v-icon>
-            </v-btn>
+              </v-col>
             </v-row>
           </v-col>
-          
-          
-      
       <v-row>
+
+        <v-btn v-if="this.isChartActive" fab dark small color="#4B4B46" fixed left bottom @click="downloadFile"> 
+          <v-icon
+            medium
+            color="white"
+            >
+            mdi-arrow-collapse-down
+          </v-icon>
+        </v-btn>
 
         <div class="text-center ma-2">
           <v-snackbar
@@ -315,6 +300,7 @@
           this.filteredEnergyValues = this.response[1]
 
           this.isFilteredChart = true
+         
         })
         .catch( (error) => {
           if (error.response) {
@@ -325,6 +311,10 @@
         })
         this.isBtnActive2 = true 
         this.isSpinnerActive2 = false
+        //this.$refs.card.$el.goTo(999)
+        //this.$vuetify.goTo(999)
+         this.$refs.card.$el.scrollTop = this.$refs.card.$el.scrollHeight
+        
       },
       checkFilter(x){
         if (x == "Infrastructure") {
@@ -479,7 +469,7 @@
             this.selectedPlantCategories = localStorage.getItem("loc_detailed_categ")
             this.selectedFilterCateg = localStorage.getItem("loc_detailed_categ_filter")
             this.checkFilter(this.selectedPlantCategories)
-            this.filterData()
+            //this.filterData()
         }
 
         this.timeValues = null

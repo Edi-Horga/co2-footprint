@@ -9,7 +9,10 @@
         class="black--text"
       >
         
-        <v-toolbar-title>CO2 Footprint Tracker</v-toolbar-title>
+        <img src="../assets/logo.svg" height="90"  alt="" class="mt-12">
+        <div><v-divider vertical/></div>
+        
+        <v-toolbar-title class="mt-12" style="color: #4B4B46;">CO2 Footprint Tracker</v-toolbar-title>
  
         <template v-slot:extension>
           <v-tabs
@@ -50,7 +53,7 @@ export default {
 .v-toolbar .v-toolbar__extension {
   border-bottom: 2px solid #f2e500 !important;
 }
-.theme--dark.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active) {
+.theme--dark.v-tabs > .v-tabs-bar .v-tab:not(.v-tab--active)  {
   color: #4B4B46;
 }
 </style>

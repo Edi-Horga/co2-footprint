@@ -16,7 +16,6 @@ Vue.mixin({
 
         async loadData(c, i, x) {
 
-            this.payload = {}
             this.period = []
             this.totalKgCo2 = 0
             this.totalEnergyConsumed = 0
@@ -107,7 +106,10 @@ Vue.mixin({
                     this.totalEnergyConsumed += i
                 }
     
-                this.totalKgCo2 = results[1].data
+                this.totalKgCo2 = results[1].data[0]
+                this.distributionRegionsValues = results[1].data[1]
+                this.distributionRegionsEnergyCO2 = results[1].data[2]
+                this.distributionRegionsEnergyMWh = results[1].data[3]
     
                 arr.push(this.response)
                 this.response = results[2].data
@@ -155,6 +157,10 @@ Vue.mixin({
               
             this.timeValues = []
             this.energyValues = []
+            this.distributionRegionsValues = []
+            this.distributionRegionsEnergy = []
+            this.distributionRegionsEnergyCO2 = []
+            this.distributionRegionsEnergyMWh = []
     
         }   
     }

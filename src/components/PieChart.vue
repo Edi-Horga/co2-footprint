@@ -51,7 +51,7 @@ export default {
                 textAlign: 'justified',
                 boxWidth: 10,
                 font: {
-                  size: 13
+                  size: 14
                 }
               }
             }
@@ -84,22 +84,27 @@ export default {
         this.labelValues[index] = "Grid Electricity"
       }
     }
-  
+
+    if ( this.category == "Scope 1" || this.category == "Scope 2" || this.category == "Scope 1 & Scope 2" ) {
+      // convert from kg to tons and round number
+      this.energyValues = this.energyValues.map( item => { item = Math.round(item/1000); return item })
+    }
     let sumEnergyValues = 0
 
     this.energyValues.forEach( el => sumEnergyValues += el)
-    this.labelValues = this.labelValues.map( (j,index) =>{ return `${j} ${(this.energyValues[index] / sumEnergyValues * 100).toLocaleString(undefined, {maximumFractionDigits: 0})}%` })
+    this.labelValues = this.labelValues.map( (j,index) =>{ return `${j} ${(this.energyValues[index] / sumEnergyValues * 100).toLocaleString(undefined, {maximumFractionDigits: 1})}%` })
     this.config.data.labels = this.labelValues
      
     if ( this.category == "Scope 1" ) {
-      // convert from kg to tons
-      this.energyValues = this.energyValues.map( item => { item = item/1000; return item })
-      this.config.options.plugins.title.text = `${this.category} - Direct Emissions: ${(sumEnergyValues / 1000).toLocaleString()} [tons CO2e]`    
+      this.config.options.plugins.title.text = `${this.category} - Direct Emissions: ${sumEnergyValues.toLocaleString(undefined, {maximumFractionDigits: 0})} [tons CO2e]`    
     } else if  ( this.category == "Scope 2" ) {
-      // convert from kg to tons
-      this.energyValues = this.energyValues.map( item => { item = item/1000; return item })
-      this.config.options.plugins.title.text = `${this.category} - Indirect Emissions: ${(sumEnergyValues / 1000).toLocaleString()} [tons CO2e]`       
-    } else {
+      this.config.options.plugins.title.text = `${this.category} - Indirect Emissions: ${sumEnergyValues.toLocaleString(undefined, {maximumFractionDigits: 0})} [tons CO2e]`       
+    } else if ( this.category == "Scope 1 & Scope 2"  ) {
+      this.config.options.plugins.title.text = `${this.category} emissions: ${sumEnergyValues.toLocaleString(undefined, {maximumFractionDigits: 0})} [tons CO2e]`      
+    } else if ( this.category == "MWh") {
+      this.config.options.plugins.title.text = `Scope 1 & Scope 2 emissions: ${sumEnergyValues.toLocaleString(undefined, {maximumFractionDigits: 0})} [MWh]`      
+    }
+     else {
       this.config.options.plugins.title.text = `${this.category} energy distribution: ${sumEnergyValues.toLocaleString()} [kWh]`
     }
 
