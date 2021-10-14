@@ -288,7 +288,7 @@
         this.fpSetPeriod()
 
         await axios({ method: "GET", 
-          "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-filter-categories",
+          "url": `${this.$urlAPI}/tracker/co2-filter-categories`,
           "params": {categ: dbCateg, input_categ: this.selectedFilterCateg, c: "date", i: this.location, df: this.period[0], dt: this.period[1], pf: this.periodFilter}, 
           "headers": { "content-type": "application/json" } })
         .then( (result) => {
@@ -333,7 +333,7 @@
             } else {
             this.minutes = item.getMinutes()
             }
-            if (item.getMonth().toString().length == 1) {
+            if (item.getMonth().toString().length == 1 && item.getMonth().toString() != '9') {
             this.months = item.getMonth() + 1
             this.months = `0${this.months}`
             } else {
@@ -382,20 +382,20 @@
 
         await Promise.all([
             axios({ method: "GET", 
-                        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
+                        "url": `${this.$urlAPI}/tracker/co2-location-detail`, 
                         "params": {c: "date", i: this.location, df: this.period[0], dt: this.period[1], pf: this.periodFilter}, 
                         "headers": { "content-type": "application/json" } }),
             axios({ method: "GET", 
-                        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
-                        "params": {c: "subcategory", i: this.location, df: this.period[0], dt: this.period[1], pf: ''},  
+                        "url": `${this.$urlAPI}/tracker/co2-location-detail`, 
+                        "params": {c: "subcategory", i: this.location, df: this.period[0], dt: this.period[1], pf: this.periodFilter},  
                         "headers": { "content-type": "application/json" } }),
             axios({ method: "GET", 
-                        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
-                        "params": {c: "area", i: this.location, df: this.period[0], dt: this.period[1], pf: ''}, 
+                        "url": `${this.$urlAPI}/tracker/co2-location-detail`, 
+                        "params": {c: "area", i: this.location, df: this.period[0], dt: this.period[1], pf: this.periodFilter}, 
                         "headers": { "content-type": "application/json" } }),
             axios({ method: "GET", 
-                        "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-location-detail", 
-                        "params": {c: "tag_name", i: this.location, df: this.period[0], dt: this.period[1], pf: ''}, 
+                        "url": `${this.$urlAPI}/tracker/co2-location-detail`, 
+                        "params": {c: "tag_name", i: this.location, df: this.period[0], dt: this.period[1], pf: this.periodFilter}, 
                         "headers": { "content-type": "application/json" } })
         ])
             .then( results => {
@@ -409,8 +409,6 @@
             this.timeValues = this.response[0]
             this.energyValues = this.response[1]
 
-            console.log(this.timeValues)
-            console.log(this.energyValues)
             this.response = results[1].data
 
             //decompress gzip response

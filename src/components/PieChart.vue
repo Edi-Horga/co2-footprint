@@ -80,7 +80,7 @@ export default {
     }
 
     for (const [index, item ] of this.labelValues.entries()) {
-      if (item == "Grid Electricity (purchased; renewable AND non-renewable)") {
+      if (item == "Grid Electricity (purchased  renewable AND non-renewable)") {
         this.labelValues[index] = "Grid Electricity"
       }
     }

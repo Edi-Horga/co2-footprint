@@ -49,7 +49,7 @@ Vue.mixin({
                 } else {
                     this.minutes = item.getMinutes()
                 }
-                if (item.getMonth().toString().length == 1) {
+                if (item.getMonth().toString().length == 1 && item.getMonth().toString() != '9') {
                     this.months = item.getMonth() + 1
                     this.months = `0${this.months}`
                 } else {
@@ -72,20 +72,20 @@ Vue.mixin({
             
             await Promise.all([
                 axios({ method: "GET", 
-                            "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-map-mwh", 
+                            "url": `${this.$urlAPI}/tracker/co2-map-mwh`, 
                             //"data": this.payload,
                             "params": this.params,  
                             "headers": { "content-type": "application/json" } }),
                 axios({ method: "GET", 
-                            "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-map-total-kg", 
+                            "url": `${this.$urlAPI}/tracker/co2-map-total-kg`, 
                             "params": this.params, 
                             "headers": { "content-type": "application/json" } }),
                 axios({ method: "GET", 
-                            "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-map-distribution-scope1", 
+                            "url": `${this.$urlAPI}/tracker/co2-map-distribution-scope1`, 
                             "params": this.params,
                             "headers": { "content-type": "application/json" } }),
                 axios({ method: "GET", 
-                            "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/co2-map-distribution-scope2", 
+                            "url": `${this.$urlAPI}/tracker/co2-map-distribution-scope2`, 
                             "params": this.params,  
                             "headers": { "content-type": "application/json" } })
             ])

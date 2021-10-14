@@ -30,11 +30,12 @@ export default {
             x: {
               ticks: {
                 callback: function(value) {
-                  if (this.getLabelForValue(value).includes(':')) {
-                    return this.getLabelForValue(value).substring(0,0)
-                  } else {
-                    return this.getLabelForValue(value)
-                  }
+                  // if (this.getLabelForValue(value).includes('00:00')) {
+                  //   return this.getLabelForValue(value).substring(0,0)
+                  // } else {
+                  //   return this.getLabelForValue(value)
+                  // }
+                  return this.getLabelForValue(value).substring(0,10)
                 }
               }
             },

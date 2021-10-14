@@ -196,7 +196,7 @@
        async loadGeo() {
           await Promise.all([
             axios({ method: "GET", 
-                    "url": "https://2s3ds132y9.execute-api.eu-central-1.amazonaws.com/prod/tracker/geo-country",  
+                    "url": `${this.$urlAPI}/tracker/geo-country`,  
                     "headers": { "content-type": "application/json" } })
           ])
             .then( results => {
