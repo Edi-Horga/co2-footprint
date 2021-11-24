@@ -64,7 +64,7 @@ export default {
               csv += `${dwlData[3][0][d]},${dwlData[3][1][d]}\n`
             }
         }
-        var blob = new Blob([csv], {type: "application/csv"})
+        var blob = new Blob(["\uFEFF" + csv], {type: "text/csv;charset=utf-8"})
         FileSaver.saveAs(blob, `${this.region}_${this.period[0]}-${this.period[1]}.csv`)
       },
     }
