@@ -4,50 +4,58 @@
     <v-container fluid class="mx-0 px-0">
           <v-col cols="12" sm="12"> 
             <v-row  justify="center" dense class="mb-n6 mt-n2">
-                <div style="margin-top: 5px;">
-                    <h3>{{location}}</h3>
-                </div>
-                <div  style="width: 400px; margin-left: 10px;">
-                    <v-text-field
-                        id="datepicker"
-                        dense
-                        outlined
-                        prepend-inner-icon="mdi-calendar"
-                    ></v-text-field>
-                </div>
-                <div style="width: 150px; margin-left: 10px;">
-                    <v-autocomplete
-                    v-model="periodFilter"
-                    :items="periodFilters"
-                    dense
-                    small
-                    outlined
-                    prepend-inner-icon="mdi-filter"
-                    ></v-autocomplete>
-                </div>
-                <div style="width: 170px; margin-left: 10px;">
-                    <v-btn
-                        v-if="this.isBtnActive"
-                        rounded
-                        block
-                        dark
-                        color="#D7004B"
-                        @click="showValues()"
-                        class="loadBtn"
-                    >
-                    Load Data
-                    </v-btn>
-                    <div class="text-center">
-                        <v-progress-circular
-                        v-if="this.isSpinnerActive"
-                        :size="50"
-                        :width="6"
-                        color="#D7004B"
-                        indeterminate
-                        center
-                        ></v-progress-circular>
-                    </div>
-                </div>
+              <v-btn  dark small fab depressed color=white left fixed top style="margin-top: 95px;" @click="goBack()"> 
+                <v-icon
+                medium
+                color="black"
+                >
+                    mdi-arrow-left
+                </v-icon>
+              </v-btn>
+              <div style="margin-top: 5px;">
+                  <h3>{{location}}</h3>
+              </div>
+              <div  style="width: 400px; margin-left: 10px;">
+                  <v-text-field
+                      id="datepicker"
+                      dense
+                      outlined
+                      prepend-inner-icon="mdi-calendar"
+                  ></v-text-field>
+              </div>
+              <div style="width: 150px; margin-left: 10px;">
+                  <v-autocomplete
+                  v-model="periodFilter"
+                  :items="periodFilters"
+                  dense
+                  small
+                  outlined
+                  prepend-inner-icon="mdi-filter"
+                  ></v-autocomplete>
+              </div>
+              <div style="width: 170px; margin-left: 10px;">
+                  <v-btn
+                      v-if="this.isBtnActive"
+                      rounded
+                      block
+                      dark
+                      color="#D7004B"
+                      @click="showValues()"
+                      class="loadBtn"
+                  >
+                  Load Data
+                  </v-btn>
+                  <div class="text-center">
+                      <v-progress-circular
+                      v-if="this.isSpinnerActive"
+                      :size="50"
+                      :width="6"
+                      color="#D7004B"
+                      indeterminate
+                      center
+                      ></v-progress-circular>
+                  </div>
+              </div>
             </v-row>
             <v-row justify="center">
               <v-col cols="12" sm="10" class="px-2 pt-0 mx-5">
@@ -241,6 +249,10 @@
       this.showValues()
     },
     methods: {
+
+      goBack() {
+        this.$router.push({name: 'Location'}).catch(()=>{})
+      },
 
       async downloadFile(){
         let jsonData
