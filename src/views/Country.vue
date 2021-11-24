@@ -78,7 +78,7 @@
                 class="mt-6 mb-2"
                 outlined
               >
-                <PieChart :energyValues="distributionRegionsEnergyCO2" :labelValues="distributionRegionsValues" :category="scopeCategories[2]"/>
+                <PieChart :energyValues="distributionRegionsEnergyCO2" :labelValues="distributionRegionsValues" :category="this.scopeCategories[2]"/>
               </v-card>
             </v-row>
               <v-row justify="center">
@@ -86,7 +86,7 @@
                   class="mb-2"
                   outlined
                 >
-                  <PieChart :energyValues="distributionRegionsEnergyMWh" :labelValues="distributionRegionsValues" :category="scopeCategories[3]"/>
+                  <PieChart :energyValues="distributionRegionsEnergyMWh" :labelValues="distributionRegionsValues" :category="this.scopeCategories[3]"/>
                 </v-card>
               </v-row>
             <v-row justify="center">
@@ -94,7 +94,7 @@
                 class="mb-2"
                 outlined
               >
-                <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
+                <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="this.scopeCategories[0]"/>
               </v-card>
             </v-row>
             <v-row justify="center">
@@ -102,7 +102,7 @@
                 class="mb-2"
                 outlined
               >
-                <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>
+                <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="this.scopeCategories[1]"/>
               </v-card>
             </v-row>
           </v-card>
@@ -333,8 +333,7 @@
         snackbar: false,
 
         totalEnergyConsumed: 0,
-        totalKgCo2: 0,
-        scopeCategories: ['Scope 1', 'Scope 2', 'Scope 1 & Scope 2', 'MWh']
+        totalKgCo2: 0
       }
     }
   }

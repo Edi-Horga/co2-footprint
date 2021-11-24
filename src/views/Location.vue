@@ -80,7 +80,7 @@
                 class="mt-6 mb-2"
                 outlined
               >
-                <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="scopeCategories[0]"/>
+                <PieChart :energyValues="scope1Values" :labelValues="scope1Labels" :category="this.scopeCategories[0]"/>
               </v-card>
             </v-row>
             <v-row justify="center">
@@ -88,7 +88,7 @@
                 class="my-0"
                 outlined
               >
-                <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="scopeCategories[1]"/>
+                <PieChart :energyValues="scope2Values" :labelValues="scope2Labels" :category="this.scopeCategories[1]"/>
               </v-card>
             </v-row>
           </v-card>
@@ -298,8 +298,7 @@
         snackbar: false,
 
         totalEnergyConsumed: 0,
-        totalKgCo2: 0,
-        scopeCategories: ['Scope 1', 'Scope 2' ]
+        totalKgCo2: 0
       }
     }
   }
