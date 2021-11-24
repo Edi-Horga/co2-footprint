@@ -111,7 +111,7 @@
     
 
       <v-row>
-        <ExportData v-if="this.isChartActive" :region="this.country" :period="this.period" /> 
+        <ExportData v-if="this.isChartActive" :region="this.country" :period="this.period" :source="'sofi'" /> 
         <div class="text-center ma-2">
           <v-snackbar
             v-model="snackbar"

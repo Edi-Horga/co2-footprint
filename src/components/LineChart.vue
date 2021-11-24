@@ -29,14 +29,13 @@ export default {
           scales: {
             x: {
               ticks: {
-                callback: function(value) {
-                  // if (this.getLabelForValue(value).includes('00:00')) {
-                  //   return this.getLabelForValue(value).substring(0,0)
-                  // } else {
-                  //   return this.getLabelForValue(value)
-                  // }
-                  return this.getLabelForValue(value).substring(0,10)
-                }
+                // callback: function(value) {
+                //   if ( !this.getLabelForValue(value).includes('00:00:00') ) {
+                //     return this.getLabelForValue(value).substring(0,0)
+                //   } else {
+                //     return this.getLabelForValue(value).substring(0,10)
+                //   }
+                // }
               }
             },
             y: {
@@ -54,6 +53,7 @@ export default {
   },
   mounted() {
     if (this.sourceDb == "sofi") {
+      //this.config.options.scales.x.ticks.callback = function(value) {return this.getLabelForValue(value)}
       this.config.options.scales.y.title.text = "MWh"
     } 
     this.config.data.labels = this.timeValues

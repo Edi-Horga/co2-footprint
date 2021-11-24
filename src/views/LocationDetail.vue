@@ -64,9 +64,9 @@
                       <span class="float-sm-left" >Total energy consumption:</span><span class="float-sm-right"  style="color:rgb(215, 0, 75, 1);font-weight:bold;float-right">{{ this.totalEnergyConsumed.toLocaleString()}} kWh </span>
                     </div>
                     <br>
-                    <div>
+                    <!-- <div>
                       <span class="float-sm-left" >Total carbon dioxide:</span><span class="float-sm-right" style="color:rgb(215, 0, 75, 1);font-weight:bold">{{ (this.totalEnergyConsumed * this.co2Factor / 1000).toFixed(2).toLocaleString() }} metric tons CO2e </span>
-                    </div>
+                    </div> -->
                   </v-card-text>
                   <br>
                   <v-divider/>
@@ -97,7 +97,7 @@
                   <br>
                   <v-divider/>
                   <v-row  justify="center" class="mt-6">
-                    <div style="margin-left: 5px; width: 200px;">
+                    <div style="margin-left: 5px; width: 250px;">
                       <v-select
                         v-model="selectedPlantCategories"
                         :items= plantCategories
@@ -161,16 +161,7 @@
             </v-row>
           </v-col>
       <v-row>
-
-        <v-btn v-if="this.isChartActive" fab dark small color="#4B4B46" fixed left bottom @click="downloadFile"> 
-          <v-icon
-            medium
-            color="white"
-            >
-            mdi-arrow-collapse-down
-          </v-icon>
-        </v-btn>
-
+        <ExportData v-if="this.isChartActive" :region="this.location" :period="this.period" :source="'messdas'" /> 
         <div class="text-center ma-2">
           <v-snackbar
             v-model="snackbar"
@@ -204,6 +195,7 @@
   import flatpickr from "flatpickr"
   import LineChart from '../components/LineChart.vue'
   import PieChart from '../components/PieChart.vue'
+  import ExportData from '../components/ExportData.vue'
   //import localforage from 'localforage'
 
 
@@ -277,9 +269,9 @@
         localStorage.setItem("loc_detailed_categ_filter", this.selectedFilterCateg)
         let dbCateg = ''
 
-        if (this.selectedPlantCategories == "Infrastructure") {
+        if (this.selectedPlantCategories == "Infrastructure (Top 10)") {
           dbCateg = "subcategory"
-        } else if (this.selectedPlantCategories == "Department") {
+        } else if (this.selectedPlantCategories == "Department (Top 10)") {
           dbCateg = "area"
         } else {
           dbCateg = "tag_name"
@@ -317,9 +309,9 @@
         
       },
       checkFilter(x){
-        if (x == "Infrastructure") {
+        if (x == "Infrastructure (Top 10)") {
           this.filterCateg = this.subCategoryValues
-        } else if ( x == "Department") {
+        } else if ( x == "Department (Top 10)") {
           this.filterCateg = this.departmentValues
         } else if ( x == "Machine (Top 10)") {
           this.filterCateg = this.machineValues
@@ -399,7 +391,7 @@
                         "headers": { "content-type": "application/json" } })
         ])
             .then( results => {
-
+              
             this.response = results[0].data
 
             //decompress gzip response
@@ -410,7 +402,7 @@
             this.energyValues = this.response[1]
 
             this.response = results[1].data
-
+            
             //decompress gzip response
             this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
             this.response = JSON.parse(this.response)
@@ -433,21 +425,29 @@
             this.response = pako.inflate(Buffer.from(this.response, 'base64'), { to: 'string' })
             this.response = JSON.parse(this.response)
 
-            let sortedArray = []
-            for (var i = 0; i < this.response[0].length; i++) {
-                sortedArray.push({machine: this.response[0][i], value: this.response[1][i]})
-            }
-            this.sortArray(sortedArray, "value")
-            sortedArray = sortedArray.slice(0,10)
 
-            for (let item of sortedArray) {
-                this.machineValues.push(item.machine)
-                this.machineEnergyValues.push(item.value)
-            }
+            // let sortedArray = []
+            // for (var i = 0; i < this.response[0].length; i++) {
+            //     sortedArray.push({machine: this.response[0][i], value: this.response[1][i]})
+            // }
+            // this.sortArray(sortedArray, "value")
+            // sortedArray = sortedArray.slice(0,10)
+
+            // for (let item of sortedArray) {
+            //     this.machineValues.push(item.machine)
+            //     this.machineEnergyValues.push(item.value)
+            // }
+            this.machineValues = this.response[0]
+            this.machineEnergyValues = this.response[1]
 
             for (const i of this.energyValues ) {
                 this.totalEnergyConsumed += i
             }
+
+            localStorage.setItem("dwl_csv_obj", JSON.stringify([[this.timeValues,this.energyValues],
+                                                                [this.subCategoryValues, this.subEnergyValues],
+                                                                [this.departmentValues, this.departmentEnergyValues],
+                                                                [this.machineValues, this.machineEnergyValues]]))
 
             this.isChartActive = true
             this.isFilteredChart = false
@@ -524,7 +524,7 @@
         periodFilters: ['Year', 'Month', 'Week', 'Day', 'Hour'],
         location: '',
 
-        plantCategories: ['Infrastructure', 'Department', 'Machine (Top 10)'],
+        plantCategories: ['Infrastructure (Top 10)', 'Department (Top 10)', 'Machine (Top 10)'],
         selectedPlantCategories:'',
         selectedFilterCateg: '',
         filterCateg: [],
@@ -536,7 +536,8 @@
     },
     components: {
       LineChart,
-      PieChart
+      PieChart,
+      ExportData
     }
   }
 </script>
