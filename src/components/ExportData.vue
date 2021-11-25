@@ -1,12 +1,17 @@
 <template>
-  <v-btn  fab dark small color="#4B4B46" fixed left bottom @click="downloadFile"> 
-    <v-icon
-    medium
-    color="white"
-    >
-        mdi-arrow-collapse-down
-    </v-icon>
-  </v-btn>
+  <v-tooltip right>
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn  fab dark small color="#4B4B46" fixed left bottom @click="downloadFile" v-bind="attrs" v-on="on"> 
+        <v-icon
+        medium
+        color="white"
+        >
+            mdi-arrow-collapse-down
+        </v-icon>
+      </v-btn>
+    </template>
+    <span>Download CSV</span>
+  </v-tooltip>
 </template>
 
 <script>

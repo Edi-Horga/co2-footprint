@@ -4,14 +4,20 @@
     <v-container fluid class="mx-0 px-0">
           <v-col cols="12" sm="12"> 
             <v-row  justify="center" dense class="mb-n6 mt-n2">
-              <v-btn  dark small fab depressed color=white left fixed top style="margin-top: 95px;" @click="goBack()"> 
-                <v-icon
-                medium
-                color="black"
-                >
-                    mdi-arrow-left
-                </v-icon>
-              </v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn  dark small fab depressed color=white left fixed top style="margin-top: 95px;" @click="goBack()" v-bind="attrs" v-on="on"> 
+                    <v-icon
+                    medium
+                    color="black"
+                    >
+                        mdi-arrow-left
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>Back</span>
+              </v-tooltip>
+              
               <div style="margin-top: 5px;">
                   <h3>{{location}}</h3>
               </div>
