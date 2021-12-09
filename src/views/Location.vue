@@ -157,7 +157,7 @@
         this.defaultDates[0] = new Date(this.defaultDates[0])
         this.defaultDates[1] = new Date(this.defaultDates[1])
       } else {
-        this.defaultDates = [ new Date((new Date()).setMonth((new Date()).getMonth() - 6)),new Date() ]
+        this.defaultDates = [ new Date((new Date()).setMonth((new Date()).getMonth() - 12)),new Date() ]
       }
 
       this.fp =flatpickr('#datepicker', {
